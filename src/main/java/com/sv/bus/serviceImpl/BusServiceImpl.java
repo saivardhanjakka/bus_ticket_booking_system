@@ -1,6 +1,7 @@
 package com.sv.bus.serviceImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +29,25 @@ public class BusServiceImpl implements BusService {
 	@Override
 	public List<BusesDto> getBuses() {
 		
-		
-		return null;
+		List<BusesDto> busList=busRepo.findAll().stream().map(bus->modelMapper.map(bus, BusesDto.class)).collect(Collectors.toList());
+		return busList;
 	}
 
 	@Override
 	public BusesDto getBusById(Long busId) {
-		// TODO Auto-generated method stub
+		Buses buses=busRepo.findById(busId).orElse(null);
+		if(buses!=null) {
+			return modelMapper.map(buses, BusesDto.class);
+		}
 		return null;
 	}
 
 	@Override
 	public boolean deleteBusDto(Long busId) {
-		// TODO Auto-generated method stub
+		if(busRepo.existsById(busId)) {
+			busRepo.deleteById(busId);
+			return true;
+		}
 		return false;
 	}
 
